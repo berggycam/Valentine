@@ -29,35 +29,22 @@ interface ProposalDashboardProps {
 }
 
 export default function ProposalDashboard({ userProposals, userResponses = [], onShareProposal }: ProposalDashboardProps) {
-  const [searchEmail, setSearchEmail] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [showResults, setShowResults] = useState(false);
 
-  const filteredProposals = userProposals.filter(proposal => 
-    searchEmail === '' || 
-    proposal.fromEmail.toLowerCase().includes(searchEmail.toLowerCase()) ||
-    proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
+  // Only show proposals where user is involved
+  const userSpecificProposals = userProposals.filter(proposal => 
+    proposal.fromEmail.toLowerCase() === userEmail.toLowerCase() ||
+    proposal.toEmail.toLowerCase() === userEmail.toLowerCase()
   );
 
-  // Filter responses by:
-  // 1. Search in response message and responder name
-  // 2. Or if the response is to a proposal where the user's email matches
-  const filteredResponses = userResponses.filter(response => {
-    if (searchEmail === '') return true;
-    
-    // Search in response content
-    const matchesContent = 
-      response.message.toLowerCase().includes(searchEmail.toLowerCase()) ||
-      response.fromName.toLowerCase().includes(searchEmail.toLowerCase());
-    
-    // Find the proposal this response belongs to
+  // Only show responses to user's proposals
+  const userSpecificResponses = userResponses.filter(response => {
     const proposal = userProposals.find(p => p.id === response.proposalId);
-    
-    // Check if this response is to/from the user's email
-    const matchesEmail = proposal && (
-      proposal.fromEmail.toLowerCase().includes(searchEmail.toLowerCase()) ||
-      proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
+    return proposal && (
+      proposal.fromEmail.toLowerCase() === userEmail.toLowerCase() ||
+      proposal.toEmail.toLowerCase() === userEmail.toLowerCase()
     );
-    
-    return matchesContent || matchesEmail;
   });
 
   return (
