@@ -119,7 +119,7 @@ export default function Home() {
 
   const fetchProposal = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/proposals/${id}`);
+      const response = await fetch(`https://valentine-kohl-seven.vercel.app/api/proposals/${id}`);
       if (response.ok) {
         const data = await response.json();
         setProposal(data);
@@ -135,7 +135,7 @@ export default function Home() {
     e.preventDefault();
     
     try {
-      const response = await fetch('http://localhost:3001/proposals', {
+      const response = await fetch('https://valentine-kohl-seven.vercel.app/api/proposals', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,7 +182,7 @@ export default function Home() {
 
   const fetchUserProposals = async (name: string) => {
     try {
-      const response = await fetch('http://localhost:3001/proposals');
+      const response = await fetch('https://valentine-kohl-seven.vercel.app/api/proposals');
       if (response.ok) {
         const allProposals = await response.json();
         const userProposals = allProposals.filter((p: Proposal) => 
@@ -224,7 +224,7 @@ export default function Home() {
     };
 
     try {
-      await fetch('http://localhost:3001/responses', {
+      await fetch('https://valentine-kohl-seven.vercel.app/api/responses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -253,7 +253,7 @@ export default function Home() {
 
   const searchProposalsByEmail = async (email: string) => {
     try {
-      const response = await fetch('http://localhost:3001/proposals');
+      const response = await fetch('https://valentine-kohl-seven.vercel.app/api/proposals');
       if (!response.ok) {
         throw new Error('Failed to fetch proposals');
       }
