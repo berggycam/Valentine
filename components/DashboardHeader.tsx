@@ -27,30 +27,6 @@ export default function DashboardHeader({ showDashboard, onTabChange, onBackToHo
             </h1>
             <div className="w-20"></div>
           </div>
-          
-          {/* Navigation Tabs */}
-          <div className="flex justify-center space-x-4">
-        <button
-          onClick={() => onTabChange(false)}
-          className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-            !showDashboard 
-              ? 'bg-pink-500 text-white' 
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
-        >
-          Create New Proposal
-        </button>
-        <button
-          onClick={() => onTabChange(true)}
-          className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-            showDashboard 
-              ? 'bg-pink-500 text-white' 
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
-        >
-          View Responses
-        </button>
-      </div>
         </div>
       )}
     </>
