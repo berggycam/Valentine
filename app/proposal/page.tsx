@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import DashboardHeader from '../../components/DashboardHeader';
+import CreateProposalPopup from '../../components/CreateProposalPopup';
 
 interface Proposal {
   id: string;
@@ -28,6 +29,7 @@ export default function ProposalPage() {
   const [response, setResponse] = useState<Response | null>(null);
   const [responseMessage, setResponseMessage] = useState('');
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -38,6 +40,15 @@ export default function ProposalPage() {
       fetchProposal(proposalId);
     }
   }, []);
+
+  useEffect(() => {
+    if (showCelebration) {
+      const timer = setTimeout(() => {
+        setShowCreatePopup(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showCelebration]);
 
   const fetchProposal = async (id: string) => {
     try {
@@ -104,6 +115,14 @@ export default function ProposalPage() {
       x: Math.random() * maxX,
       y: Math.random() * maxY
     });
+  };
+
+  const handleCreateProposal = () => {
+    window.location.href = '/';
+  };
+
+  const handleClosePopup = () => {
+    setShowCreatePopup(false);
   };
 
   if (loading) {
@@ -252,6 +271,12 @@ export default function ProposalPage() {
             </button>
           </div>
         </div>
+        
+        <CreateProposalPopup
+          show={showCreatePopup}
+          onClose={handleClosePopup}
+          onCreateProposal={handleCreateProposal}
+        />
       </div>
     </div>
   );
