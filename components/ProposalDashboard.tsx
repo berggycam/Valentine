@@ -37,12 +37,28 @@ export default function ProposalDashboard({ userProposals, userResponses = [], o
     proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
   );
 
-  // Filter responses by searching in the response message and responder name
-  const filteredResponses = userResponses.filter(response => 
-    searchEmail === '' || 
-    response.message.toLowerCase().includes(searchEmail.toLowerCase()) ||
-    response.fromName.toLowerCase().includes(searchEmail.toLowerCase())
-  );
+  // Filter responses by:
+  // 1. Search in response message and responder name
+  // 2. Or if the response is to a proposal where the user's email matches
+  const filteredResponses = userResponses.filter(response => {
+    if (searchEmail === '') return true;
+    
+    // Search in response content
+    const matchesContent = 
+      response.message.toLowerCase().includes(searchEmail.toLowerCase()) ||
+      response.fromName.toLowerCase().includes(searchEmail.toLowerCase());
+    
+    // Find the proposal this response belongs to
+    const proposal = userProposals.find(p => p.id === response.proposalId);
+    
+    // Check if this response is to/from the user's email
+    const matchesEmail = proposal && (
+      proposal.fromEmail.toLowerCase().includes(searchEmail.toLowerCase()) ||
+      proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
+    );
+    
+    return matchesContent || matchesEmail;
+  });
 
   return (
     <div className="mb-8">
@@ -53,7 +69,7 @@ export default function ProposalDashboard({ userProposals, userResponses = [], o
         <div className="relative">
           <input
             type="text"
-            placeholder="Search proposals and responses..."
+            placeholder="Search by email to see your proposals and responses..."
             value={searchEmail}
             onChange={(e) => setSearchEmail(e.target.value)}
             className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm sm:text-base text-gray-800 placeholder-gray-700"
@@ -160,7 +176,7 @@ export default function ProposalDashboard({ userProposals, userResponses = [], o
                       </h3>
                       <div className="mt-1 space-y-1">
                         <p className="text-xs sm:text-sm text-gray-700">
-                          To Proposal ID: {response.proposalId}
+                          To: {userProposals.find(p => p.id === response.proposalId)?.toName || 'Unknown'}
                         </p>
                         <p className="text-xs sm:text-sm text-gray-700">
                           Responded: {new Date(response.createdAt).toLocaleDateString()}
