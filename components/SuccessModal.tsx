@@ -24,21 +24,60 @@ export default function SuccessModal({ show, onClose, proposalId, toName, onView
           </p>
           <div className="bg-pink-100 rounded-lg p-4 mb-4">
             <p className="text-center text-pink-600 font-mono text-sm break-all">
-              {typeof window !== 'undefined' ? `${window.location.origin}?proposal=${proposalId}` : `?proposal=${proposalId}`}
+              {typeof window !== 'undefined' ? `${window.location.origin}/proposal?proposal=${proposalId}` : `/proposal?proposal=${proposalId}`}
             </p>
           </div>
           <div className="space-y-3">
-            <button
-              onClick={() => {
-                if (typeof window !== 'undefined') {
-                  navigator.clipboard.writeText(`${window.location.origin}?proposal=${proposalId}`);
-                  alert('Link copied to clipboard! Share it with your partner.');
-                }
-              }}
-              className="w-full py-3 bg-pink-500 text-white rounded-lg font-semibold hover:bg-pink-600"
-            >
-              Copy Link 📋
-            </button>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    navigator.clipboard.writeText(`${window.location.origin}/proposal?proposal=${proposalId}`);
+                    alert('Link copied to clipboard! Share it with your partner.');
+                  }
+                }}
+                className="py-3 bg-pink-500 text-white rounded-lg font-semibold hover:bg-pink-600 text-sm"
+              >
+                📋 Copy Link
+              </button>
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`I have something special to share with you! 💕 Check out my Valentine's proposal: ${window.location.origin}/proposal?proposal=${proposalId}`)}`;
+                    window.open(whatsappUrl, '_blank');
+                  }
+                }}
+                className="py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 text-sm"
+              >
+                💬 WhatsApp
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    const emailUrl = `mailto:?subject=Valentine's Proposal 💕&body=${encodeURIComponent(`I have something special to share with you! 💕 Check out my Valentine's proposal: ${window.location.origin}/proposal?proposal=${proposalId}`)}`;
+                    window.open(emailUrl, '_blank');
+                  }
+                }}
+                className="py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 text-sm"
+              >
+                📧 Email
+              </button>
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`I created a special Valentine's proposal! 💕 ${window.location.origin}/proposal?proposal=${proposalId}`)}`;
+                    window.open(twitterUrl, '_blank');
+                  }
+                }}
+                className="py-3 bg-sky-500 text-white rounded-lg font-semibold hover:bg-sky-600 text-sm"
+              >
+                � Twitter
+              </button>
+            </div>
+            
             <button
               onClick={() => {
                 onClose();
@@ -46,7 +85,7 @@ export default function SuccessModal({ show, onClose, proposalId, toName, onView
               }}
               className="w-full py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300"
             >
-              View My Proposals 📊
+              View My Proposals & Responses 📊
             </button>
           </div>
         </div>

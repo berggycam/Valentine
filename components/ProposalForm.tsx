@@ -19,6 +19,7 @@ interface ProposalFormProps {
   currentStep: number;
   setCurrentStep: (step: number) => void;
   canProceed: () => boolean;
+  onSubmit: (e: React.FormEvent) => Promise<void>;
 }
 
 const emotions = [
@@ -36,7 +37,8 @@ export default function ProposalForm({
   setFormData, 
   currentStep, 
   setCurrentStep, 
-  canProceed 
+  canProceed,
+  onSubmit 
 }: ProposalFormProps) {
   const toggleEmotion = (emotion: string) => {
     setFormData(prev => ({
@@ -206,6 +208,29 @@ export default function ProposalForm({
           <div className="space-y-4">
             <div className="text-center mb-6">
               <div className="text-6xl mb-4">📧</div>
+              <p className="text-gray-600">Add your email address</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Your Email
+              </label>
+              <input
+                type="email"
+                value={formData.fromEmail}
+                onChange={(e) => setFormData(prev => ({ ...prev, fromEmail: e.target.value }))}
+                className="w-full px-4 py-3 border-2 border-pink-200 rounded-lg focus:border-pink-400 focus:outline-none text-lg text-gray-900 placeholder-gray-500 bg-white"
+                placeholder="your.email@example.com"
+                autoFocus
+              />
+            </div>
+          </div>
+        );
+
+      case 9:
+        return (
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-4">🔒</div>
               <p className="text-gray-600">Privacy settings</p>
             </div>
             <div className="bg-pink-50 rounded-lg p-4">
@@ -225,7 +250,7 @@ export default function ProposalForm({
           </div>
         );
 
-      case 9:
+      case 10:
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
@@ -236,6 +261,7 @@ export default function ProposalForm({
               <div>
                 <p className="text-sm text-gray-600">From:</p>
                 <p className="font-semibold">{formData.fromName}</p>
+                <p className="text-sm text-gray-500">{formData.fromEmail}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">To:</p>
@@ -278,7 +304,7 @@ export default function ProposalForm({
       </div>
 
       {/* Navigation Buttons */}
-      {currentStep < 9 && (
+      {currentStep < 10 ? (
         <div className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-0">
           <button
             onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
@@ -292,7 +318,7 @@ export default function ProposalForm({
             Previous
           </button>
           <button
-            onClick={() => setCurrentStep(Math.min(9, currentStep + 1))}
+            onClick={() => setCurrentStep(Math.min(10, currentStep + 1))}
             disabled={!canProceed()}
             className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 order-1 sm:order-2 ${
               canProceed()
@@ -301,6 +327,22 @@ export default function ProposalForm({
             }`}
           >
             Next
+          </button>
+        </div>
+      ) : (
+        // Review step (10) - Submit button
+        <div className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-0">
+          <button
+            onClick={() => setCurrentStep(9)}
+            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200 order-2 sm:order-1"
+          >
+            Previous
+          </button>
+          <button
+            onClick={(e) => onSubmit(e)}
+            className="px-8 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-rose-600 transform hover:scale-105 transition-all duration-200 shadow-lg order-1 sm:order-2"
+          >
+            Submit Proposal 💕
           </button>
         </div>
       )}
