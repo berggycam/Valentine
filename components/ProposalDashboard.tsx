@@ -30,7 +30,23 @@ interface ProposalDashboardProps {
 
 export default function ProposalDashboard({ userProposals, userResponses = [], onShareProposal }: ProposalDashboardProps) {
   const [userEmail, setUserEmail] = useState('');
+  const [searchEmail, setSearchEmail] = useState('');
   const [showResults, setShowResults] = useState(false);
+
+  // Filter proposals based on search email
+  const filteredProposals = userProposals.filter(proposal => 
+    proposal.fromEmail.toLowerCase().includes(searchEmail.toLowerCase()) ||
+    proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
+  );
+
+  // Filter responses based on search email
+  const filteredResponses = userResponses.filter(response => {
+    const proposal = userProposals.find(p => p.id === response.proposalId);
+    return proposal && (
+      proposal.fromEmail.toLowerCase().includes(searchEmail.toLowerCase()) ||
+      proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
+    );
+  });
 
   // Only show proposals where user is involved
   const userSpecificProposals = userProposals.filter(proposal => 
