@@ -23,7 +23,7 @@ export default function DashboardHeader({ showDashboard, onTabChange, onBackToHo
               Back to Home
             </button>
             <h1 className="text-3xl font-bold text-red-600 romantic-font">
-              {showDashboard ? 'My Proposals' : 'Create Proposal'}
+              {showDashboard ? 'My Proposals' : 'Valentine Proposal'}
             </h1>
             <div className="w-20"></div>
           </div>

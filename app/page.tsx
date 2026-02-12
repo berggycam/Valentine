@@ -405,7 +405,7 @@ export default function Home() {
         {showLanding ? (
           <div className="text-center py-12">
             <h1 className="text-4xl font-bold text-pink-600 mb-8 romantic-font">
-              Valentine's Proposal 💕
+              Valentine Proposal 💕
             </h1>
             <p className="text-lg text-gray-700 mb-12">
               Create a romantic proposal or check responses to your proposals
