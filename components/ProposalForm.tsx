@@ -102,7 +102,7 @@ export default function ProposalForm({
               <div className="text-6xl mb-4">🌟</div>
               <p className="text-gray-600">What's your relationship?</p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {relationships.map((rel) => (
                 <button
                   key={rel}
@@ -146,7 +146,7 @@ export default function ProposalForm({
               <div className="text-6xl mb-4">🦋</div>
               <p className="text-gray-600">What are you feeling right now?</p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {emotions.map((emotion) => (
                 <button
                   key={emotion}
@@ -279,11 +279,11 @@ export default function ProposalForm({
 
       {/* Navigation Buttons */}
       {currentStep < 9 && (
-        <div className="flex justify-between">
+        <div className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-0">
           <button
             onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
             disabled={currentStep === 1}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 order-2 sm:order-1 ${
               currentStep === 1
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -294,7 +294,7 @@ export default function ProposalForm({
           <button
             onClick={() => setCurrentStep(Math.min(9, currentStep + 1))}
             disabled={!canProceed()}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 order-1 sm:order-2 ${
               canProceed()
                 ? 'bg-pink-500 text-white hover:bg-pink-600 transform hover:scale-105'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
