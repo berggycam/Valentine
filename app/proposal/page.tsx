@@ -135,16 +135,45 @@ export default function ProposalPage() {
 
   if (showCelebration) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-400 via-red-400 to-pink-600 flex items-center justify-center overflow-hidden">
-        <div className="text-center z-10">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-bounce">
+      <div className="min-h-screen bg-gradient-to-br from-pink-400 via-red-400 to-pink-600 flex items-center justify-center overflow-hidden p-4">
+        <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 max-w-2xl w-full text-center z-10">
+          <div className="text-6xl mb-6 animate-bounce">🎉</div>
+          <h1 className="text-4xl md:text-5xl font-bold text-pink-600 mb-6">
             YES! 💕
           </h1>
-          <p className="text-xl md:text-2xl text-white mb-8">
-            You made me the happiest person alive!
+          
+          {proposal && (
+            <div className="mb-8">
+              <div className="bg-pink-50 rounded-lg p-6 mb-6">
+                <h3 className="text-lg font-semibold text-pink-800 mb-3">The Proposal:</h3>
+                <p className="text-gray-800 leading-relaxed whitespace-pre-wrap mb-4">
+                  {proposal.message}
+                </p>
+                <p className="text-sm text-gray-600">
+                  From: <span className="font-medium">{proposal.fromName}</span> to <span className="font-medium">{proposal.toName}</span>
+                </p>
+              </div>
+              
+              {responseMessage && (
+                <div className="bg-green-50 rounded-lg p-6 mb-6">
+                  <h3 className="text-lg font-semibold text-green-800 mb-3">Your Response:</h3>
+                  <p className="text-gray-800 italic">
+                    "{responseMessage}"
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <p className="text-xl text-gray-700 mb-4">
+            You made them the happiest person alive!
           </p>
-          <div className="relative">
-            {[...Array(20)].map((_, i) => (
+          <p className="text-lg text-gray-600">
+            Thank you for your beautiful response 💕
+          </p>
+          
+          <div className="relative mt-8">
+            {[...Array(10)].map((_, i) => (
               <div
                 key={i}
                 className="absolute animate-pulse"
@@ -152,13 +181,12 @@ export default function ProposalPage() {
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 3}s`,
-                  fontSize: `${Math.random() * 20 + 20}px`
+                  fontSize: `${Math.random() * 15 + 15}px`
                 }}
               >
                 💕
               </div>
             ))}
-            <div className="text-6xl md:text-8xl animate-bounce">🎉</div>
           </div>
         </div>
       </div>
