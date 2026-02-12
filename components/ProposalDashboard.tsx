@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Proposal {
   id: string;
@@ -30,53 +30,36 @@ interface ProposalDashboardProps {
 
 export default function ProposalDashboard({ userProposals, userResponses = [], onShareProposal }: ProposalDashboardProps) {
   const [searchEmail, setSearchEmail] = useState('');
-  const [filteredProposals, setFilteredProposals] = useState<Proposal[]>(userProposals);
-  const [filteredResponses, setFilteredResponses] = useState<Response[]>(userResponses);
+  const [searchResults, setSearchResults] = useState<{ proposals: Proposal[], responses: Response[] }>({ proposals: [], responses: [] });
   const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  // Fetch filtered data when search email changes
-  useEffect(() => {
-    const fetchFilteredData = async () => {
-      if (!searchEmail.trim()) {
-        // If no search email, show all data
-        setFilteredProposals(userProposals);
-        setFilteredResponses(userResponses);
-        return;
-      }
+  const handleSearch = async () => {
+    if (!searchEmail.trim()) return;
 
-      setIsLoading(true);
-      try {
-        // Fetch filtered proposals
-        const proposalsResponse = await fetch(`/api/proposals?email=${encodeURIComponent(searchEmail)}`);
-        if (proposalsResponse.ok) {
-          const proposalsData = await proposalsResponse.json();
-          setFilteredProposals(proposalsData.data);
-        }
+    setIsLoading(true);
+    setHasSearched(true);
+    
+    try {
+      // Fetch filtered proposals
+      const proposalsResponse = await fetch(`/api/proposals?email=${encodeURIComponent(searchEmail)}`);
+      const proposalsData = proposalsResponse.ok ? await proposalsResponse.json() : { data: [] };
 
-        // Fetch filtered responses
-        const responsesResponse = await fetch(`/api/responses?email=${encodeURIComponent(searchEmail)}`);
-        if (responsesResponse.ok) {
-          const responsesData = await responsesResponse.json();
-          setFilteredResponses(responsesData.data);
-        }
-      } catch (error) {
-        console.error('Error fetching filtered data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      // Fetch filtered responses
+      const responsesResponse = await fetch(`/api/responses?email=${encodeURIComponent(searchEmail)}`);
+      const responsesData = responsesResponse.ok ? await responsesResponse.json() : { data: [] };
 
-    const timeoutId = setTimeout(fetchFilteredData, 300); // Debounce search
-    return () => clearTimeout(timeoutId);
-  }, [searchEmail, userProposals, userResponses]);
-
-  // Update filtered data when props change
-  useEffect(() => {
-    if (!searchEmail.trim()) {
-      setFilteredProposals(userProposals);
-      setFilteredResponses(userResponses);
+      setSearchResults({
+        proposals: proposalsData.data,
+        responses: responsesData.data
+      });
+    } catch (error) {
+      console.error('Error searching:', error);
+      setSearchResults({ proposals: [], responses: [] });
+    } finally {
+      setIsLoading(false);
     }
-  }, [userProposals, userResponses, searchEmail]);
+  };
 
   return (
     <div className="mb-8">
@@ -84,57 +67,73 @@ export default function ProposalDashboard({ userProposals, userResponses = [], o
       
       {/* Search Bar */}
       <div className="mb-4 sm:mb-6">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search by email to see your proposals and responses..."
-            value={searchEmail}
-            onChange={(e) => setSearchEmail(e.target.value)}
-            disabled={isLoading}
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm sm:text-base text-gray-800 placeholder-gray-700 disabled:opacity-50"
-          />
-          {isLoading ? (
-            <div className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5">
-              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-pink-400 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <svg
-              className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5 w-4 h-4 sm:w-5 sm:h-5 text-pink-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          )}
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Search by email to see your proposals and responses..."
+              value={searchEmail}
+              onChange={(e) => setSearchEmail(e.target.value)}
+              disabled={isLoading}
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm sm:text-base text-gray-800 placeholder-gray-700 disabled:opacity-50"
+            />
+            {isLoading ? (
+              <div className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-pink-400 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <svg
+                className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5 w-4 h-4 sm:w-5 sm:h-5 text-pink-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            )}
+          </div>
+          <button
+            onClick={handleSearch}
+            disabled={isLoading || !searchEmail.trim()}
+            className="px-4 sm:px-6 py-2 sm:py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base font-medium"
+          >
+            Search
+          </button>
         </div>
-        {searchEmail && !isLoading && (
+        {hasSearched && !isLoading && (
           <p className="mt-2 text-xs sm:text-sm text-gray-700 px-1">
-            Found {filteredProposals.length + filteredResponses.length} result{filteredProposals.length + filteredResponses.length !== 1 ? 's' : ''} matching "{searchEmail}"
+            Found {searchResults.proposals.length + searchResults.responses.length} result{searchResults.proposals.length + searchResults.responses.length !== 1 ? 's' : ''} matching "{searchEmail}"
           </p>
         )}
       </div>
       
-      {filteredProposals.length === 0 && filteredResponses.length === 0 ? (
+      {!hasSearched ? (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🔍</div>
+          <p className="text-gray-700">
+            Enter an email address and click Search to find proposals and responses
+          </p>
+        </div>
+      ) : searchResults.proposals.length === 0 && searchResults.responses.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📭</div>
           <p className="text-gray-700">
-            {searchEmail ? `No results found matching "${searchEmail}"` : 'No proposals or responses yet. Create your first proposal!'}
+            No results found matching "{searchEmail}"
           </p>
         </div>
       ) : (
         <div className="space-y-6">
           {/* Proposals Section */}
-          {filteredProposals.length > 0 && (
+          {searchResults.proposals.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-pink-600 mb-3">Proposals ({filteredProposals.length})</h3>
+              <h3 className="text-lg font-semibold text-pink-600 mb-3">Proposals ({searchResults.proposals.length})</h3>
               <div className="grid gap-3 sm:gap-4">
-                {filteredProposals.map((proposal) => (
+                {searchResults.proposals.map((proposal: Proposal) => (
                   <div key={proposal.id} className="bg-pink-50 rounded-lg p-3 sm:p-4 border border-pink-200">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                       <div className="flex-1">
@@ -158,7 +157,7 @@ export default function ProposalDashboard({ userProposals, userResponses = [], o
                           </p>
                         </div>
                         <div className="flex flex-wrap gap-1 mt-2">
-                          {proposal.emotions.slice(0, 3).map((emotion, index) => (
+                          {proposal.emotions.slice(0, 3).map((emotion: string, index: number) => (
                             <span
                               key={index}
                               className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-pink-200 text-pink-800 rounded-full text-xs"
@@ -189,11 +188,11 @@ export default function ProposalDashboard({ userProposals, userResponses = [], o
           )}
 
           {/* Responses Section */}
-          {filteredResponses.length > 0 && (
+          {searchResults.responses.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-pink-600 mb-3">Responses ({filteredResponses.length})</h3>
+              <h3 className="text-lg font-semibold text-pink-600 mb-3">Responses ({searchResults.responses.length})</h3>
               <div className="grid gap-3 sm:gap-4">
-                {filteredResponses.map((response) => (
+                {searchResults.responses.map((response: Response) => (
                   <div key={response.id} className="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200">
                     <div className="flex-1">
                       <h3 className="font-semibold text-purple-600 text-base sm:text-lg">
@@ -213,7 +212,7 @@ export default function ProposalDashboard({ userProposals, userResponses = [], o
                         </p>
                       </div>
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {response.emotions.slice(0, 3).map((emotion, index) => (
+                        {response.emotions.slice(0, 3).map((emotion: string, index: number) => (
                           <span
                             key={index}
                             className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-purple-200 text-purple-800 rounded-full text-xs"
