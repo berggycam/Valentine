@@ -135,69 +135,16 @@ export default function ProposalPage() {
 
   if (showCelebration) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-400 via-red-400 to-pink-600 flex items-center justify-center overflow-hidden p-4">
-        <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 max-w-2xl w-full z-10">
-          <div className="text-center mb-8">
-            <div className="text-6xl mb-6 animate-bounce">🎉</div>
-            <h1 className="text-4xl md:text-5xl font-bold text-pink-600 mb-6">
-              YES! 💕
-            </h1>
-          </div>
-          
-          {proposal && (
-            <div className="space-y-4 mb-8">
-              {/* Step 1: The Proposal */}
-              <div className="bg-pink-50 rounded-lg p-6 border-2 border-pink-200">
-                <div className="flex items-center mb-3">
-                  <div className="bg-pink-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">
-                    1
-                  </div>
-                  <h3 className="text-lg font-semibold text-pink-800">The Proposal</h3>
-                </div>
-                <p className="text-gray-800 leading-relaxed whitespace-pre-wrap mb-3">
-                  {proposal.message}
-                </p>
-                <p className="text-sm text-gray-600">
-                  From: <span className="font-medium">{proposal.fromName}</span> to <span className="font-medium">{proposal.toName}</span>
-                </p>
-              </div>
-              
-              {/* Step 2: Your Response */}
-              <div className="bg-green-50 rounded-lg p-6 border-2 border-green-200">
-                <div className="flex items-center mb-3">
-                  <div className="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">
-                    2
-                  </div>
-                  <h3 className="text-lg font-semibold text-green-800">Your Response</h3>
-                </div>
-                {responseMessage ? (
-                  <p className="text-gray-800 italic">
-                    "{responseMessage}"
-                  </p>
-                ) : (
-                  <p className="text-gray-800 italic">
-                    A heartfelt "YES!" 💕
-                  </p>
-                )}
-              </div>
-              
-              {/* Step 3: Thank You */}
-              <div className="bg-purple-50 rounded-lg p-6 border-2 border-purple-200">
-                <div className="flex items-center mb-3">
-                  <div className="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">
-                    3
-                  </div>
-                  <h3 className="text-lg font-semibold text-purple-800">Thank You!</h3>
-                </div>
-                <p className="text-gray-800">
-                  You made them the happiest person alive! Your beautiful response means the world. 💕
-                </p>
-              </div>
-            </div>
-          )}
-          
-          <div className="relative mt-8">
-            {[...Array(10)].map((_, i) => (
+      <div className="min-h-screen bg-gradient-to-br from-pink-400 via-red-400 to-pink-600 flex items-center justify-center overflow-hidden">
+        <div className="text-center z-10">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-bounce">
+            YES! 💕
+          </h1>
+          <p className="text-xl md:text-2xl text-white mb-8">
+            You made me the happiest person alive!
+          </p>
+          <div className="relative">
+            {[...Array(20)].map((_, i) => (
               <div
                 key={i}
                 className="absolute animate-pulse"
@@ -205,12 +152,13 @@ export default function ProposalPage() {
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 3}s`,
-                  fontSize: `${Math.random() * 15 + 15}px`
+                  fontSize: `${Math.random() * 20 + 20}px`
                 }}
               >
                 💕
               </div>
             ))}
+            <div className="text-6xl md:text-8xl animate-bounce">🎉</div>
           </div>
         </div>
       </div>
