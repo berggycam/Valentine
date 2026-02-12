@@ -148,7 +148,7 @@ export default function ProposalPage() {
           <h2 className="text-2xl font-bold text-pink-600 mb-4">
             Proposal Not Found
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-700">
             The proposal you're looking for doesn't exist or has been removed.
           </p>
         </div>
@@ -167,7 +167,7 @@ export default function ProposalPage() {
             {response.answer === 'yes' ? 'They Said YES!' : 'They Said No'}
           </h2>
           {response.message && (
-            <p className="text-gray-600 mb-6 italic">
+            <p className="text-gray-700 mb-6 italic">
               "{response.message}"
             </p>
           )}

@@ -259,24 +259,24 @@ export default function ProposalForm({
             </div>
             <div className="bg-pink-50 rounded-lg p-6 space-y-4">
               <div>
-                <p className="text-sm text-gray-600">From:</p>
+                <p className="text-sm text-gray-700">From:</p>
                 <p className="font-semibold">{formData.fromName}</p>
                 <p className="text-sm text-gray-500">{formData.fromEmail}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">To:</p>
+                <p className="text-sm text-gray-700">To:</p>
                 <p className="font-semibold">{formData.toName}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Relationship:</p>
+                <p className="text-sm text-gray-700">Relationship:</p>
                 <p className="font-semibold">{formData.relationship}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Message:</p>
+                <p className="text-sm text-gray-700">Message:</p>
                 <p className="font-medium">{formData.message}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Emotions:</p>
+                <p className="text-sm text-gray-700">Emotions:</p>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {formData.emotions.map((emotion, index) => (
                     <span

@@ -79,13 +79,13 @@ export default function ProposalDashboard({ userProposals, onShareProposal }: Pr
                     To: {proposal.toName}
                   </h3>
                   <div className="mt-1 space-y-1">
-                    <p className="text-xs sm:text-sm text-gray-600">
+                    <p className="text-xs sm:text-sm text-gray-700">
                       From: {proposal.fromName} ({proposal.fromEmail})
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-600">
+                    <p className="text-xs sm:text-sm text-gray-700">
                       To: {proposal.toEmail}
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-600">
+                    <p className="text-xs sm:text-sm text-gray-700">
                       Created: {new Date(proposal.createdAt).toLocaleDateString()}
                     </p>
                   </div>
