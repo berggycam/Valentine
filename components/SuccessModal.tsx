@@ -79,7 +79,7 @@ export default function SuccessModal({ show, onClose, proposalId, toName, onView
             </div>
             
             <div className="bg-purple-50 rounded-lg p-4 mb-4 border border-purple-200">
-              <p className="text-sm text-purple-800 font-medium mb-2">💝 Need help or have feedback?</p>
+              <p className="text-sm text-purple-800 font-medium mb-2">💝 DM me, let's work together</p>
               <p className="text-xs text-purple-700 mb-1">📧 Email: bergsjoseph@gmail.com</p>
               <p className="text-xs text-purple-700">📱 Call/WhatsApp: +233504744718</p>
             </div>
