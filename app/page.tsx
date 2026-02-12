@@ -36,6 +36,7 @@ export default function Home() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
   const [userProposals, setUserProposals] = useState<Proposal[]>([]);
   const [createdProposalId, setCreatedProposalId] = useState('');
   const [searchEmail, setSearchEmail] = useState('');
@@ -396,10 +397,79 @@ export default function Home() {
         <DashboardHeader 
           showDashboard={showDashboard}
           onTabChange={setShowDashboard}
+          onBackToHome={() => setShowLanding(true)}
+          showLanding={showLanding}
         />
 
         {/* Main Content */}
-        {!showDashboard ? (
+        {showLanding ? (
+          <div className="text-center py-12">
+            <h1 className="text-4xl font-bold text-pink-600 mb-8 romantic-font">
+              Valentine's Proposal 💕
+            </h1>
+            <p className="text-lg text-gray-700 mb-12">
+              Create a romantic proposal or check responses to your proposals
+            </p>
+            
+            <div className="flex justify-center gap-8">
+              <button
+                onClick={() => {
+                  setShowLanding(false);
+                  setShowDashboard(false);
+                }}
+                className="group relative px-12 py-6 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-2xl font-bold text-xl hover:from-pink-600 hover:to-rose-600 transform hover:scale-105 transition-all duration-200 shadow-xl"
+              >
+                <div className="flex items-center gap-3">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>Create Proposal</span>
+                </div>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                  Start a new proposal
+                </div>
+              </button>
+              
+              <button
+                onClick={() => {
+                  setShowLanding(false);
+                  setShowDashboard(true);
+                  fetchUserProposals(''); // Fetch all proposals for dashboard
+                }}
+                className="group relative px-12 py-6 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-2xl font-bold text-xl hover:from-purple-600 hover:to-indigo-600 transform hover:scale-105 transition-all duration-200 shadow-xl"
+              >
+                <div className="flex items-center gap-3">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <span>See Responses</span>
+                </div>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                  View proposals & responses
+                </div>
+              </button>
+            </div>
+            
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="text-center">
+                <div className="text-4xl mb-3">💝</div>
+                <h3 className="font-semibold text-gray-800 mb-2">Personalized</h3>
+                <p className="text-sm text-gray-600">Create unique, heartfelt proposals</p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-3">💌</div>
+                <h3 className="font-semibold text-gray-800 mb-2">Share Instantly</h3>
+                <p className="text-sm text-gray-600">Send your proposal via link</p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-3">💕</div>
+                <h3 className="font-semibold text-gray-800 mb-2">Track Responses</h3>
+                <p className="text-sm text-gray-600">See their answer in real-time</p>
+              </div>
+            </div>
+          </div>
+        ) : !showDashboard ? (
           <ProposalForm
             formData={formData}
             setFormData={setFormData}
