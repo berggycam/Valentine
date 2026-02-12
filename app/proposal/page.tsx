@@ -218,7 +218,7 @@ export default function ProposalPage() {
             <textarea
               value={responseMessage}
               onChange={(e) => setResponseMessage(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-pink-200 rounded-lg focus:border-pink-400 focus:outline-none text-gray-900 resize-none"
+              className="w-full px-4 py-3 border-2 border-pink-200 rounded-lg focus:border-pink-400 focus:outline-none text-gray-900 placeholder-gray-700 resize-none"
               rows={4}
               placeholder="Your response..."
             />

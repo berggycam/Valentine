@@ -39,7 +39,7 @@ export default function ProposalDashboard({ userProposals, onShareProposal }: Pr
             placeholder="Search by email (from or to)..."
             value={searchEmail}
             onChange={(e) => setSearchEmail(e.target.value)}
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm sm:text-base"
+            className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm sm:text-base text-gray-800 placeholder-gray-700"
           />
           <svg
             className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5 w-4 h-4 sm:w-5 sm:h-5 text-pink-400"
