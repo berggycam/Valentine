@@ -13,18 +13,35 @@ interface Proposal {
   createdAt: string;
 }
 
+interface Response {
+  id: string;
+  proposalId: string;
+  message: string;
+  fromName: string;
+  emotions: string[];
+  createdAt: string;
+}
+
 interface ProposalDashboardProps {
   userProposals: Proposal[];
+  userResponses?: Response[];
   onShareProposal: (id: string) => void;
 }
 
-export default function ProposalDashboard({ userProposals, onShareProposal }: ProposalDashboardProps) {
+export default function ProposalDashboard({ userProposals, userResponses = [], onShareProposal }: ProposalDashboardProps) {
   const [searchEmail, setSearchEmail] = useState('');
 
   const filteredProposals = userProposals.filter(proposal => 
     searchEmail === '' || 
     proposal.fromEmail.toLowerCase().includes(searchEmail.toLowerCase()) ||
     proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
+  );
+
+  // Filter responses by searching in the response message and responder name
+  const filteredResponses = userResponses.filter(response => 
+    searchEmail === '' || 
+    response.message.toLowerCase().includes(searchEmail.toLowerCase()) ||
+    response.fromName.toLowerCase().includes(searchEmail.toLowerCase())
   );
 
   return (
@@ -35,8 +52,8 @@ export default function ProposalDashboard({ userProposals, onShareProposal }: Pr
       <div className="mb-4 sm:mb-6">
         <div className="relative">
           <input
-            type="email"
-            placeholder="Search by email (from or to)..."
+            type="text"
+            placeholder="Search proposals and responses..."
             value={searchEmail}
             onChange={(e) => setSearchEmail(e.target.value)}
             className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm sm:text-base text-gray-800 placeholder-gray-700"
@@ -56,71 +73,125 @@ export default function ProposalDashboard({ userProposals, onShareProposal }: Pr
           </svg>
         </div>
         {searchEmail && (
-          <p className="mt-2 text-xs sm:text-sm text-gray-600 px-1">
-            Found {filteredProposals.length} proposal{filteredProposals.length !== 1 ? 's' : ''} matching "{searchEmail}"
+          <p className="mt-2 text-xs sm:text-sm text-gray-700 px-1">
+            Found {filteredProposals.length + filteredResponses.length} result{filteredProposals.length + filteredResponses.length !== 1 ? 's' : ''} matching "{searchEmail}"
           </p>
         )}
       </div>
       
-      {filteredProposals.length === 0 ? (
+      {filteredProposals.length === 0 && filteredResponses.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📭</div>
-          <p className="text-gray-600">
-            {searchEmail ? `No proposals found matching "${searchEmail}"` : 'No proposals yet. Create your first one!'}
+          <p className="text-gray-700">
+            {searchEmail ? `No results found matching "${searchEmail}"` : 'No proposals or responses yet. Create your first proposal!'}
           </p>
         </div>
       ) : (
-        <div className="grid gap-3 sm:gap-4">
-          {filteredProposals.map((proposal) => (
-            <div key={proposal.id} className="bg-pink-50 rounded-lg p-3 sm:p-4 border border-pink-200">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-pink-600 text-base sm:text-lg">
-                    To: {proposal.toName}
-                  </h3>
-                  <div className="mt-1 space-y-1">
-                    <p className="text-xs sm:text-sm text-gray-700">
-                      From: {proposal.fromName} ({proposal.fromEmail})
-                    </p>
-                    <p className="text-xs sm:text-sm text-gray-700">
-                      To: {proposal.toEmail}
-                    </p>
-                    <p className="text-xs sm:text-sm text-gray-700">
-                      Created: {new Date(proposal.createdAt).toLocaleDateString()}
-                    </p>
+        <div className="space-y-6">
+          {/* Proposals Section */}
+          {filteredProposals.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-pink-600 mb-3">Proposals ({filteredProposals.length})</h3>
+              <div className="grid gap-3 sm:gap-4">
+                {filteredProposals.map((proposal) => (
+                  <div key={proposal.id} className="bg-pink-50 rounded-lg p-3 sm:p-4 border border-pink-200">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-pink-600 text-base sm:text-lg">
+                          To: {proposal.toName}
+                        </h3>
+                        <div className="mt-1 space-y-1">
+                          <p className="text-xs sm:text-sm text-gray-700">
+                            From: {proposal.fromName} ({proposal.fromEmail})
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-700">
+                            To: {proposal.toEmail}
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-700">
+                            Created: {new Date(proposal.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="mt-2">
+                          <p className="text-xs sm:text-sm text-gray-700 line-clamp-2">
+                            {proposal.message.substring(0, 100)}...
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {proposal.emotions.slice(0, 3).map((emotion, index) => (
+                            <span
+                              key={index}
+                              className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-pink-200 text-pink-800 rounded-full text-xs"
+                            >
+                              {emotion}
+                            </span>
+                          ))}
+                          {proposal.emotions.length > 3 && (
+                            <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-pink-200 text-pink-800 rounded-full text-xs">
+                              +{proposal.emotions.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 sm:gap-2">
+                        <button
+                          onClick={() => onShareProposal(proposal.id)}
+                          className="px-3 py-1.5 sm:px-3 sm:py-1 bg-pink-500 text-white rounded-lg text-xs sm:text-sm hover:bg-pink-600 whitespace-nowrap"
+                        >
+                          Share
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-2">
-                    <p className="text-xs sm:text-sm text-gray-700 line-clamp-2">
-                      {proposal.message.substring(0, 100)}...
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {proposal.emotions.slice(0, 3).map((emotion, index) => (
-                      <span
-                        key={index}
-                        className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-pink-200 text-pink-800 rounded-full text-xs"
-                      >
-                        {emotion}
-                      </span>
-                    ))}
-                    {proposal.emotions.length > 3 && (
-                      <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-pink-200 text-pink-800 rounded-full text-xs">
-                        +{proposal.emotions.length - 3}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex gap-2 sm:gap-2">
-                  <button
-                    onClick={() => onShareProposal(proposal.id)}
-                    className="px-3 py-1.5 sm:px-3 sm:py-1 bg-pink-500 text-white rounded-lg text-xs sm:text-sm hover:bg-pink-600 whitespace-nowrap"
-                  >
-                    Share
-                  </button>
-                </div>
+                ))}
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Responses Section */}
+          {filteredResponses.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-pink-600 mb-3">Responses ({filteredResponses.length})</h3>
+              <div className="grid gap-3 sm:gap-4">
+                {filteredResponses.map((response) => (
+                  <div key={response.id} className="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-purple-600 text-base sm:text-lg">
+                        Response from: {response.fromName}
+                      </h3>
+                      <div className="mt-1 space-y-1">
+                        <p className="text-xs sm:text-sm text-gray-700">
+                          To Proposal ID: {response.proposalId}
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-700">
+                          Responded: {new Date(response.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="mt-2">
+                        <p className="text-xs sm:text-sm text-gray-700 line-clamp-3">
+                          {response.message}
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {response.emotions.slice(0, 3).map((emotion, index) => (
+                          <span
+                            key={index}
+                            className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-purple-200 text-purple-800 rounded-full text-xs"
+                          >
+                            {emotion}
+                          </span>
+                        ))}
+                        {response.emotions.length > 3 && (
+                          <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-purple-200 text-purple-800 rounded-full text-xs">
+                            +{response.emotions.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

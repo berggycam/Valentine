@@ -17,9 +17,10 @@ interface Proposal {
 interface Response {
   id: string;
   proposalId: string;
-  answer: 'yes' | 'no';
   message: string;
-  respondedAt: string;
+  fromName: string;
+  emotions: string[];
+  createdAt: string;
 }
 
 export default function ProposalPage() {
@@ -64,10 +65,15 @@ export default function ProposalPage() {
   const handleResponseSubmit = async (answer: 'yes' | 'no') => {
     if (!proposal) return;
 
-    const newResponse: Omit<Response, 'id' | 'respondedAt'> = {
+    const newResponse = {
       proposalId: proposal.id,
-      answer,
-      message: responseMessage
+      message: answer === 'yes' 
+        ? `YES! ${responseMessage}` 
+        : `Sorry, ${responseMessage}`,
+      fromName: proposal.toName, // The recipient is responding
+      emotions: answer === 'yes' 
+        ? ['Love', 'Happiness', 'Excitement']
+        : ['Gratitude', 'Friendship']
     };
 
     try {
@@ -157,14 +163,15 @@ export default function ProposalPage() {
   }
 
   if (response) {
+    const isYes = response.message.startsWith('YES!');
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 via-red-50 to-pink-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 max-w-2xl w-full text-center">
           <div className="text-6xl mb-6">
-            {response.answer === 'yes' ? '💕' : '💔'}
+            {isYes ? '💕' : '💔'}
           </div>
           <h2 className="text-2xl font-bold text-pink-600 mb-4">
-            {response.answer === 'yes' ? 'They Said YES!' : 'They Said No'}
+            {isYes ? 'They Said YES!' : 'They Said No'}
           </h2>
           {response.message && (
             <p className="text-gray-700 mb-6 italic">
@@ -172,7 +179,7 @@ export default function ProposalPage() {
             </p>
           )}
           <p className="text-sm text-gray-500">
-            Responded on {new Date(response.respondedAt).toLocaleDateString()}
+            Responded on {new Date(response.createdAt).toLocaleDateString()}
           </p>
         </div>
       </div>

@@ -21,9 +21,10 @@ interface Proposal {
 interface Response {
   id: string;
   proposalId: string;
-  answer: 'yes' | 'no';
   message: string;
-  respondedAt: string;
+  fromName: string;
+  emotions: string[];
+  createdAt: string;
 }
 
 export default function Home() {
@@ -31,6 +32,7 @@ export default function Home() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
   const [userProposals, setUserProposals] = useState<Proposal[]>([]);
+  const [userResponses, setUserResponses] = useState<Response[]>([]);
   const [createdProposalId, setCreatedProposalId] = useState('');
   const [searchEmail, setSearchEmail] = useState('');
   const [searchResults, setSearchResults] = useState<Proposal[]>([]);
@@ -166,17 +168,26 @@ export default function Home() {
 
   const fetchUserProposals = async (name: string) => {
     try {
-      const response = await fetch('/api/proposals');
-      if (response.ok) {
-        const allProposalsResponse = await response.json();
+      // Fetch proposals
+      const proposalsResponse = await fetch('/api/proposals');
+      if (proposalsResponse.ok) {
+        const allProposalsResponse = await proposalsResponse.json();
         const allProposals = allProposalsResponse.data;
         const userProposals = allProposals.filter((p: Proposal) => 
           p.fromName === name
         );
         setUserProposals(userProposals);
       }
+
+      // Fetch all responses
+      const responsesResponse = await fetch('/api/responses');
+      if (responsesResponse.ok) {
+        const allResponsesResponse = await responsesResponse.json();
+        const allResponses = allResponsesResponse.data;
+        setUserResponses(allResponses);
+      }
     } catch (error) {
-      console.error('Error fetching proposals:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -308,6 +319,7 @@ export default function Home() {
         ) : (
           <ProposalDashboard
             userProposals={userProposals}
+            userResponses={userResponses}
             onShareProposal={shareProposal}
           />
         )}
