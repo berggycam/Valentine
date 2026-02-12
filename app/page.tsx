@@ -6,6 +6,7 @@ import DashboardHeader from '../components/DashboardHeader';
 import ProposalForm from '../components/ProposalForm';
 import ProposalDashboard from '../components/ProposalDashboard';
 import SuccessModal from '../components/SuccessModal';
+import Footer from '../components/Footer';
 
 interface Proposal {
   id: string;
@@ -331,6 +332,8 @@ export default function Home() {
           toName={formData.toName}
           onViewProposals={() => setShowDashboard(true)}
         />
+        
+        <Footer />
       </div>
     </div>
   );
