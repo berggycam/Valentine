@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { JSON_SERVER_URL, API_ENDPOINTS } from '@/lib/api-config';
+import { API_ENDPOINTS } from '@/lib/api-config';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const { id } = params;
   try {
-    const id = params.id;
     console.log('Fetching proposal with ID:', id);
-    console.log('JSON Server URL:', `${JSON_SERVER_URL}/proposals/${id}`);
+    console.log('API Endpoint:', `${API_ENDPOINTS.PROPOSALS}/${id}`);
     
     const response = await fetch(`${API_ENDPOINTS.PROPOSALS}/${id}`, {
       method: 'GET',
