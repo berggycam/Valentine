@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Proposal {
   id: string;
@@ -29,39 +29,54 @@ interface ProposalDashboardProps {
 }
 
 export default function ProposalDashboard({ userProposals, userResponses = [], onShareProposal }: ProposalDashboardProps) {
-  const [userEmail, setUserEmail] = useState('');
   const [searchEmail, setSearchEmail] = useState('');
-  const [showResults, setShowResults] = useState(false);
+  const [filteredProposals, setFilteredProposals] = useState<Proposal[]>(userProposals);
+  const [filteredResponses, setFilteredResponses] = useState<Response[]>(userResponses);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Filter proposals based on search email
-  const filteredProposals = userProposals.filter(proposal => 
-    proposal.fromEmail.toLowerCase().includes(searchEmail.toLowerCase()) ||
-    proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
-  );
+  // Fetch filtered data when search email changes
+  useEffect(() => {
+    const fetchFilteredData = async () => {
+      if (!searchEmail.trim()) {
+        // If no search email, show all data
+        setFilteredProposals(userProposals);
+        setFilteredResponses(userResponses);
+        return;
+      }
 
-  // Filter responses based on search email
-  const filteredResponses = userResponses.filter(response => {
-    const proposal = userProposals.find(p => p.id === response.proposalId);
-    return proposal && (
-      proposal.fromEmail.toLowerCase().includes(searchEmail.toLowerCase()) ||
-      proposal.toEmail.toLowerCase().includes(searchEmail.toLowerCase())
-    );
-  });
+      setIsLoading(true);
+      try {
+        // Fetch filtered proposals
+        const proposalsResponse = await fetch(`/api/proposals?email=${encodeURIComponent(searchEmail)}`);
+        if (proposalsResponse.ok) {
+          const proposalsData = await proposalsResponse.json();
+          setFilteredProposals(proposalsData.data);
+        }
 
-  // Only show proposals where user is involved
-  const userSpecificProposals = userProposals.filter(proposal => 
-    proposal.fromEmail.toLowerCase() === userEmail.toLowerCase() ||
-    proposal.toEmail.toLowerCase() === userEmail.toLowerCase()
-  );
+        // Fetch filtered responses
+        const responsesResponse = await fetch(`/api/responses?email=${encodeURIComponent(searchEmail)}`);
+        if (responsesResponse.ok) {
+          const responsesData = await responsesResponse.json();
+          setFilteredResponses(responsesData.data);
+        }
+      } catch (error) {
+        console.error('Error fetching filtered data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  // Only show responses to user's proposals
-  const userSpecificResponses = userResponses.filter(response => {
-    const proposal = userProposals.find(p => p.id === response.proposalId);
-    return proposal && (
-      proposal.fromEmail.toLowerCase() === userEmail.toLowerCase() ||
-      proposal.toEmail.toLowerCase() === userEmail.toLowerCase()
-    );
-  });
+    const timeoutId = setTimeout(fetchFilteredData, 300); // Debounce search
+    return () => clearTimeout(timeoutId);
+  }, [searchEmail, userProposals, userResponses]);
+
+  // Update filtered data when props change
+  useEffect(() => {
+    if (!searchEmail.trim()) {
+      setFilteredProposals(userProposals);
+      setFilteredResponses(userResponses);
+    }
+  }, [userProposals, userResponses, searchEmail]);
 
   return (
     <div className="mb-8">
@@ -75,23 +90,30 @@ export default function ProposalDashboard({ userProposals, userResponses = [], o
             placeholder="Search by email to see your proposals and responses..."
             value={searchEmail}
             onChange={(e) => setSearchEmail(e.target.value)}
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm sm:text-base text-gray-800 placeholder-gray-700"
+            disabled={isLoading}
+            className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm sm:text-base text-gray-800 placeholder-gray-700 disabled:opacity-50"
           />
-          <svg
-            className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5 w-4 h-4 sm:w-5 sm:h-5 text-pink-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+          {isLoading ? (
+            <div className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5">
+              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-pink-400 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <svg
+              className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5 w-4 h-4 sm:w-5 sm:h-5 text-pink-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          )}
         </div>
-        {searchEmail && (
+        {searchEmail && !isLoading && (
           <p className="mt-2 text-xs sm:text-sm text-gray-700 px-1">
             Found {filteredProposals.length + filteredResponses.length} result{filteredProposals.length + filteredResponses.length !== 1 ? 's' : ''} matching "{searchEmail}"
           </p>

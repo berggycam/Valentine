@@ -40,10 +40,20 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const proposalId = searchParams.get('proposalId');
+    const email = searchParams.get('email');
     
     let url = API_ENDPOINTS.RESPONSES;
+    const params = new URLSearchParams();
+    
     if (proposalId) {
-      url += `?proposalId=${proposalId}`;
+      params.append('proposalId', proposalId);
+    }
+    if (email) {
+      params.append('email_like', email);
+    }
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
     }
     
     const response = await fetch(url);

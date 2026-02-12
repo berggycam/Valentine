@@ -36,9 +36,17 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const response = await fetch(API_ENDPOINTS.PROPOSALS);
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get('email');
+    
+    let url = API_ENDPOINTS.PROPOSALS;
+    if (email) {
+      url += `?email_like=${encodeURIComponent(email)}`;
+    }
+    
+    const response = await fetch(url);
     
     if (!response.ok) {
       throw new Error('Failed to fetch proposals');
