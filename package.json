@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "json-server": "json-server --watch db.json --port 3001"
   },
   "dependencies": {
+    "@types/json-server": "^0.14.8",
+    "json-server": "^1.0.0-beta.5",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
